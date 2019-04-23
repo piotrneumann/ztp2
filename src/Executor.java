@@ -1,8 +1,5 @@
 import model.ClassObject;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-
 public class Executor {
 
     private final static String CREATE_CLASS = "-c=";
@@ -11,10 +8,11 @@ public class Executor {
     private final static String GETTERS = "-g";
     private final static String NO_ARGS_CTOR = "-na";
     private final static String ALL_ARGS_CTOR = "-a";
+    private final static String SINGLETON = "-i";
 
     public void execute(String command) {
         String[] params = command.split(" ");
-
+        checkArgs(params);
     }
 
     public void checkArgs(String[] args) {
@@ -26,8 +24,7 @@ public class Executor {
                 try {
                     argValue = arg.replaceFirst(CREATE_CLASS, "").trim();
                     classObject.setName(argValue);
-                } catch (Exception e) {
-                    printMessageAndExit(ARG_ERROR_PREFIX + ARG_IMG_TO_FIND.replace("=", ""));
+                } catch (Exception ignoreException) {
                 }
             } else if (arg.startsWith(CREATE_FILED)) {
                 try {
@@ -38,37 +35,37 @@ public class Executor {
                     String name = variable[2];
                     classObject.addField(accessor, name, type);
                 } catch (Exception e) {
-                    printMessageAndExit(ARG_ERROR_PREFIX + ARG_TIMEOUT.replace("=", ""));
+                    classObject.addField("private", "default", "String");
                 }
             } else if (arg.startsWith(SETTERS)) {
                 try {
-                    argValue = arg.replaceFirst(SETTERS, "").trim();
-                    classObject.
+                    classObject.generateSetters();
                 } catch (Exception e) {
-                    printMessageAndExit(ARG_ERROR_PREFIX + ARG_THRESHOLD.replace("=", ""));
+                    System.out.println(e.getMessage());
                 }
             } else if (arg.startsWith(GETTERS)) {
                 try {
-                    argValue = arg.replaceFirst(GETTERS, "").trim();
-                    classObject.
+                    classObject.generateGetters();
                 } catch (Exception e) {
-                    printMessageAndExit(ARG_ERROR_PREFIX + ARG_SCREESHOT_DELAY.replace("=", ""));
+                    return;
                 }
             } else if (arg.startsWith(NO_ARGS_CTOR)) {
                 try {
-                    argValue = arg.replaceFirst(NO_ARGS_CTOR, "").trim();
-                    classObject.
+                    classObject.generateNoArgsCtor();
                 } catch (Exception e) {
-                    printMessageAndExit(ARG_ERROR_PREFIX + ARG_IGNORE_COLOR.replace("=", ""));
                 }
             } else if (arg.startsWith(ALL_ARGS_CTOR)) {
                 try {
-                    argValue = arg.replaceFirst(ALL_ARGS_CTOR, "").trim();
-                    classObject.
+                    classObject.generateAllArgsCtor();
                 } catch (Exception e) {
-                    printMessageAndExit(ARG_ERROR_PREFIX + ARG_IGNORE_COLOR.replace("=", ""));
+                }
+            } else if (arg.startsWith(SINGLETON)) {
+                try {
+                    classObject.generateSingleton();
+                } catch (Exception e) {
                 }
             }
         }
+        System.out.println(classObject.buildFullClass());
     }
 }

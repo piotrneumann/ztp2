@@ -4,10 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ClassObject classObject = new ClassObject("Dom");
-        classObject.addField("private", "pies", "dog");
-        classObject.addField("private", "pies", "dog");
-
-        System.out.println(classObject.buildFullClass());
+        Executor executor = new Executor();
+        executor.execute("-c=Pies -f=private:int:wiek -f=private:String:imie -na -s -g -a -i");
     }
 }
